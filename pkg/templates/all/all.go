@@ -25,6 +25,7 @@ import (
 	_ "golang.stackrox.io/kube-linter/pkg/templates/hostmounts"
 	_ "golang.stackrox.io/kube-linter/pkg/templates/hostnetwork"
 	_ "golang.stackrox.io/kube-linter/pkg/templates/hostpid"
+	_ "golang.stackrox.io/kube-linter/pkg/templates/hostport"
 	_ "golang.stackrox.io/kube-linter/pkg/templates/hpareplicas"
 	_ "golang.stackrox.io/kube-linter/pkg/templates/imagepullpolicy"
 	_ "golang.stackrox.io/kube-linter/pkg/templates/jobttlsecondsafterfinished"

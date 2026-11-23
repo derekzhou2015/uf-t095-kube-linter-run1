@@ -16,6 +16,7 @@ var (
 		"host-ipc",
 		"host-network",
 		"host-pid",
+		"host-port",
 		"invalid-target-ports",
 		"job-ttl-seconds-after-finished",
 		"latest-tag",

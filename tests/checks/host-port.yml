@@ -1,0 +1,332 @@
+---
+# Non-trigger fixtures: one per workload kind reachable via the DeploymentLike
+# object kind. Containers declare containerPort only (hostPort omitted, which
+# the Kubernetes API defaults to 0 = no host port mapping).
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dont-fire
+spec:
+  containers:
+    - name: app
+      image: nginx:1.25
+      ports:
+        - containerPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dont-fire
+spec:
+  template:
+    spec:
+      containers:
+        - name: app
+          image: nginx:1.25
+          ports:
+            - containerPort: 8080
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: dont-fire
+spec:
+  template:
+    spec:
+      containers:
+        - name: app
+          image: nginx:1.25
+          ports:
+            - containerPort: 8080
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: dont-fire
+spec:
+  template:
+    spec:
+      containers:
+        - name: app
+          image: nginx:1.25
+          ports:
+            - containerPort: 8080
+---
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: dont-fire
+spec:
+  template:
+    spec:
+      containers:
+        - name: app
+          image: nginx:1.25
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: dont-fire
+spec:
+  template:
+    spec:
+      containers:
+        - name: app
+          image: nginx:1.25
+          ports:
+            - containerPort: 8080
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: dont-fire
+spec:
+  template:
+    spec:
+      containers:
+        - name: app
+          image: nginx:1.25
+          ports:
+            - containerPort: 8080
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: dont-fire
+spec:
+  schedule: "0 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: app
+              image: nginx:1.25
+              ports:
+                - containerPort: 8080
+---
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  name: dont-fire
+spec:
+  template:
+    spec:
+      containers:
+        - name: app
+          image: nginx:1.25
+          ports:
+            - containerPort: 8080
+---
+# hostPort explicitly set to 0 is equivalent to omitting it: no host port
+# mapping, must not fire.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dont-fire-zero
+spec:
+  containers:
+    - name: app
+      image: nginx:1.25
+      ports:
+        - containerPort: 8080
+          hostPort: 0
+---
+# Multiple port entries, none with a hostPort: must not fire.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dont-fire-multiple
+spec:
+  template:
+    spec:
+      containers:
+        - name: app
+          image: nginx:1.25
+          ports:
+            - containerPort: 8080
+            - containerPort: 53
+              protocol: UDP
+            - containerPort: 9999
+              protocol: SCTP
+---
+# Trigger fixtures: one per workload kind, each with a single hostPort
+# declaration.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app
+spec:
+  containers:
+    - name: app
+      image: nginx:1.25
+      ports:
+        - containerPort: 8080
+          hostPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+spec:
+  template:
+    spec:
+      containers:
+        - name: app
+          image: nginx:1.25
+          ports:
+            - containerPort: 8080
+              hostPort: 8080
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: app
+spec:
+  template:
+    spec:
+      containers:
+        - name: app
+          image: nginx:1.25
+          ports:
+            - containerPort: 8080
+              hostPort: 8080
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: app
+spec:
+  template:
+    spec:
+      containers:
+        - name: app
+          image: nginx:1.25
+          ports:
+            - containerPort: 8080
+              hostPort: 8080
+---
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: app
+spec:
+  template:
+    spec:
+      containers:
+        - name: app
+          image: nginx:1.25
+          ports:
+            - containerPort: 8080
+              hostPort: 8080
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: app
+spec:
+  template:
+    spec:
+      containers:
+        - name: app
+          image: nginx:1.25
+          ports:
+            - containerPort: 8080
+              hostPort: 8080
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: app
+spec:
+  template:
+    spec:
+      containers:
+        - name: app
+          image: nginx:1.25
+          ports:
+            - containerPort: 8080
+              hostPort: 8080
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: app
+spec:
+  schedule: "0 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: app
+              image: nginx:1.25
+              ports:
+                - containerPort: 8080
+                  hostPort: 8080
+---
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  name: app
+spec:
+  template:
+    spec:
+      containers:
+        - name: app
+          image: nginx:1.25
+          ports:
+            - containerPort: 8080
+              hostPort: 8080
+---
+# hostPort on an init container must fire.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app-init
+spec:
+  initContainers:
+    - name: init
+      image: nginx:1.25
+      ports:
+        - containerPort: 8080
+          hostPort: 8080
+  containers:
+    - name: app
+      image: nginx:1.25
+---
+# hostPort on an ephemeral container must fire.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app-ephemeral
+spec:
+  ephemeralContainers:
+    - name: debugger
+      image: busybox:1.36
+      ports:
+        - containerPort: 9999
+          hostPort: 9999
+  containers:
+    - name: app
+      image: nginx:1.25
+---
+# Multiple port entries with mixed protocols: each entry with a non-zero
+# hostPort fires independently; entries without hostPort do not.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app-multi-protocol
+spec:
+  containers:
+    - name: app
+      image: nginx:1.25
+      ports:
+        - containerPort: 53
+          hostPort: 53
+          protocol: UDP
+        - containerPort: 443
+          hostPort: 443
+        - containerPort: 8080

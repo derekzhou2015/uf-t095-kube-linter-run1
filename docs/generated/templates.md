@@ -427,6 +427,15 @@ KubeLinter supports the following templates:
 **Supported Objects**: DeploymentLike
 
 
+## Host Port
+
+**Key**: `host-port`
+
+**Description**: Flag containers exposing ports on the host (via hostPort)
+
+**Supported Objects**: DeploymentLike
+
+
 ## HorizontalPodAutoscaler Minimum replicas
 
 **Key**: `hpa-minimum-replicas`
